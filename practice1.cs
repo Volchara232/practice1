@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 class Program
 {
 
@@ -18,6 +19,44 @@ class Program
             IsDirectory = isDirectory;
         }
     }
+    static string ShortenName(string name, int maxLength)
+    {
+        int i = name.Length - 1, have_ext = 0;
+        
+        string tmp, ext = "", extreverse = "";
+
+        if (name.Length > maxLength)
+        {
+            while (i >= 0)
+            {
+                if (name[i] == '.')
+                {
+                    have_ext = 1;
+                    break;
+                }
+                ext += name[i];
+                i--;
+            }
+            
+
+            if (have_ext == 1)
+            {   i = ext.Length - 1;
+                while (i >= 0)
+                {
+                    extreverse += ext[i];
+                    i--;
+                }
+                tmp = $"{name.Substring(0, maxLength - extreverse.Length - 2)}~.{extreverse}";
+            }
+            else tmp = $"{name.Substring(0, maxLength - extreverse.Length - 1)}~";
+            return tmp;
+
+        }
+        else return name;
+    }
+    
+
+    
     static void FirstInterface(int width)
     {
         int last_letter = width;
@@ -63,7 +102,7 @@ class Program
 
         Console.ResetColor();
         Console.WriteLine();
-       
+
 
     }
     static void FirstLinefield(int width)
@@ -209,6 +248,7 @@ class Program
         
 
     }
+    
     static void DrawBorder(int width)
     {
         Console.BackgroundColor = ConsoleColor.Blue;
@@ -222,9 +262,9 @@ class Program
             last_letter--;
         }
         Console.Write('\u255D');
-        
 
-        
+
+
 
     }
     static void FileInfo(int width)
@@ -243,10 +283,11 @@ class Program
         Console.Write('\u2551');
 
     }
-    static void Fields(int width, int height, int count_column)
+    static void Fields(int width, int height, int count_column, List <FileItem> items)
     {
-        int last_letter, column_len;
-        string name = "NOT FOUND";
+        int last_letter, column_len, i = 0, j = 0;
+        
+        
 
 
         Console.ResetColor();
@@ -259,18 +300,21 @@ class Program
         
 
 
-        while (height > 3)
+        while (height > 7 && i < items.Count )
         {
+            FileItem file = items[i];
+            i++;
+
             Console.BackgroundColor = ConsoleColor.Blue;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write('\u2551');
             last_letter = width - 2;
-            int j = 0;
+            j = 0;
             while (last_letter > 0)
             {
-                if (j < name.Length)
+                if (j < file.Name.Length)
                 {
-                    Console.Write(name[j]);
+                    Console.Write(file.Name[j]);
                     last_letter--;
                     j++;
                 }
@@ -279,8 +323,10 @@ class Program
                     Console.Write('\u2502');
                     j = 0;
                     last_letter--;
+                    file = items[i++];
+                    file.Name = ShortenName(file.Name, 10);
                 }
-                else if (j >= name.Length)
+                else if (j >= file.Name.Length)
                 {
                     Console.Write(" ");
                     last_letter--;
@@ -290,38 +336,50 @@ class Program
 
             }
             Console.Write('\u2551');
-            //Правое поле
 
 
 
+            //======Правое поле=========
+
+
+    
+            // Подготавливаем все данные ОДИН раз
             Console.Write('\u2551');
             last_letter = width - 2;
-            j = 0;
-            while (last_letter > 0)
-            {
-                if (j < name.Length)
-                {
-                    Console.Write(name[j]);
-                    last_letter--;
-                    j++;
-                }
-                else if (last_letter == 36 || last_letter == 24 || last_letter == 12)
-                {
-                    Console.Write('\u2502');
-                    j = 0;
-                    last_letter--;
-                }
-                else if (j >= name.Length)
-                {
-                    Console.Write(" ");
-                    last_letter--;
-                }
 
+            // Выводим имя
+            Console.Write(ShortenName(file.Name, 10));
+            last_letter -= ShortenName(file.Name, 10).Length;
 
+            // Заполняем до разделителя
+            while (last_letter > 36) { Console.Write(" "); last_letter--; }
+            if (last_letter == 36) { Console.Write('\u2502'); last_letter--; }
 
-            }
+            // Выводим размер
+            Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8));
+            last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
+
+            // Заполняем до разделителя
+            while (last_letter > 24) { Console.Write(" "); last_letter--; }
+            if (last_letter == 24) { Console.Write('\u2502'); last_letter--; }
+
+            // Выводим дату
+            Console.Write(ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10));
+            last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
+
+            // Заполняем до разделителя
+            while (last_letter > 12) { Console.Write(" "); last_letter--; }
+            if (last_letter == 12) { Console.Write('\u2502'); last_letter--; }
+
+            // Выводим время
+            Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 5));
+            last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 5).Length;
+
+            // Заполняем оставшееся пространство
+            while (last_letter > 0) { Console.Write(" "); last_letter--; }
 
             Console.Write('\u2551');
+            //конец правого поля
 
             Console.ResetColor(); 
             Console.WriteLine();
@@ -391,23 +449,54 @@ class Program
         int height = 25;
         int width = 100;
 
-        FirstInterface(width);
+        List<FileItem> items = new List<FileItem>
+        {
+            new FileItem("Program.cs", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("MyFileWithLongName.txt", 12345, DateTime.Now, false),
+            new FileItem("Photos", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Documents", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("SICRET.jpg", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("Homework", 54243, DateTime.Now, true),
+            new FileItem("Anapa2007", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Wildberis", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("RGR.cpp", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("PVZ.exe", 12345, DateTime.Now, false),
+            new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
+            new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("Program.cs", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("MyFileWithLongName.txt", 12345, DateTime.Now, false),
+            new FileItem("Photos", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Documents", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("SICRET.jpg", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("Homework", 54243, DateTime.Now, true),
+            new FileItem("Anapa2007", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Wildberis", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("RGR.cpp", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("PVZ.exe", 12345, DateTime.Now, false),
+            new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
+            new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
+            
+            
+        };
+        
+            FirstInterface(width);
 
 
-        FirstLinefield(width);
-        FirstLinefield(width);
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine();
+            FirstLinefield(width);
+            FirstLinefield(width);
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine();
 
-        Fields(width, height, 3);
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine();
+            Fields(width, height, 3, items);
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine();
 
 
 
-        LastInterface(width);
-        Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine();
+            LastInterface(width);
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine();
+                
         
 
 
