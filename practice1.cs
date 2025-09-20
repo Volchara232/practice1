@@ -277,7 +277,7 @@ class Program
         last_letter -= ShortenName(file.Name, 10).Length;
 
 
-        while (last_letter > 36)
+        while (last_letter > 35)
         {
             Console.Write(" ");
             last_letter--;
@@ -288,7 +288,7 @@ class Program
         last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
 
 
-        while (last_letter > 24)
+        while (last_letter > 23)
         {
             Console.Write(" ");
             last_letter--;
@@ -299,7 +299,7 @@ class Program
         last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
 
 
-        while (last_letter > 12)
+        while (last_letter > 11)
         {
             Console.Write(" ");
             last_letter--;
