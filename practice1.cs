@@ -479,14 +479,13 @@ class Program
         Console.BackgroundColor = ConsoleColor.Black;
         List<string> fieldnames = new List<string>
         {
-            "1Помощь", "2Вызов", "3Чтение", "4Правка", "5Копия", "6НовИмя", "7НовКат", "8Удал-е", "9Меню", "0Выход"
+            "1Помощь", "2Вызов ", "3Чтение ", "4Правка ", "5Копия ", "6НовИмя ", "7НовКат ", "8Удал-е ", "9Меню ", "0Выход"
         };
 
 
        
         foreach (string field in fieldnames)
         {  
-            Console.ForegroundColor = ConsoleColor.White;
             Console.Write(field[0]);
             last_letter--;
 
@@ -500,19 +499,25 @@ class Program
             }
 
 
-            Console.BackgroundColor = ConsoleColor.Black;  
-            Console.Write(" ");
-            last_letter--;
+            Console.ResetColor(); 
+            Console.Write("   ");
+            last_letter-=3;
         }
 
+    }
+    static void InputField()
+    {
+        Console.ResetColor();
+        Console.Write("[user opt]$");
+ 
     }
 
 
     static void Main()
     {
-        int height = 25;
-        int width = 100;
+        int height = 25, width = 100;
 
+        Console.Clear();
         List<FileItem> items = new List<FileItem>
         {
             new FileItem("Program.cs", 2048, DateTime.Now.AddDays(-1), false),
@@ -539,29 +544,31 @@ class Program
             new FileItem("PVZ.exe", 12345, DateTime.Now, false),
             new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
             new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
-            
-            
+
+
         };
+
+        FirstInterface(width);
+
+
+        FirstLinefield(width);
+        FirstLinefield(width);
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.WriteLine();
+
+        Fields(width, height, 3, items);
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.WriteLine();
+
+        Console.BackgroundColor = ConsoleColor.Black;
+        InputField();
+        Console.WriteLine();
         
-            FirstInterface(width);
+        LastInterface(width);
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.WriteLine();
 
 
-            FirstLinefield(width);
-            FirstLinefield(width);
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.WriteLine();
-
-            Fields(width, height, 3, items);
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.WriteLine();
-
-
-
-            LastInterface(width);
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.WriteLine();
-                
-        
 
 
 
