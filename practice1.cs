@@ -267,14 +267,49 @@ class Program
 
 
     }
-    static void FileInfo(int width)
+    static void FileInfo(int width, FileItem file)
     {
         Console.BackgroundColor = ConsoleColor.Blue;
         Console.ForegroundColor = ConsoleColor.Cyan;
         int last_letter = width - 2;
         Console.Write('\u2551');
-        Console.Write("...");
-        last_letter -= 3;
+        Console.Write(ShortenName(file.Name, 10));
+        last_letter -= ShortenName(file.Name, 10).Length;
+
+
+        while (last_letter > 36)
+        {
+            Console.Write(" ");
+            last_letter--;
+        }
+
+
+        Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8));
+        last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
+
+
+        while (last_letter > 24)
+        {
+            Console.Write(" ");
+            last_letter--;
+        }
+
+
+        Console.Write(ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10));
+        last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
+
+
+        while (last_letter > 12)
+        {
+            Console.Write(" ");
+            last_letter--;
+        }
+
+
+        Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 5));
+        last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 5).Length;
+
+
         while (last_letter > 0)
         {
             Console.Write(" ");
@@ -282,26 +317,27 @@ class Program
         }
         Console.Write('\u2551');
 
+
+        
+
     }
     static void Fields(int width, int height, int count_column, List <FileItem> items)
     {
         int last_letter, column_len, i = 0, j = 0;
-        
-        
-
-
-        Console.ResetColor();
+        FileItem target = items[0];   
         width /= 2;
-        column_len = (width - 2) / count_column;
-
-
-        
+        column_len = (width - 2) / count_column;        
         CollumNames(width, count_column);
         
 
 
         while (height > 7 && i < items.Count )
         {
+            //==========Левое поле ============
+
+
+
+
             FileItem file = items[i];
             i++;
 
@@ -343,40 +379,68 @@ class Program
 
 
     
-            // Подготавливаем все данные ОДИН раз
+           
             Console.Write('\u2551');
             last_letter = width - 2;
 
-            // Выводим имя
+     
             Console.Write(ShortenName(file.Name, 10));
             last_letter -= ShortenName(file.Name, 10).Length;
 
-            // Заполняем до разделителя
-            while (last_letter > 36) { Console.Write(" "); last_letter--; }
-            if (last_letter == 36) { Console.Write('\u2502'); last_letter--; }
 
-            // Выводим размер
+            while (last_letter > 36)
+            {
+                Console.Write(" ");
+                last_letter--;
+            }
+            if (last_letter == 36)
+            {
+                Console.Write('\u2502');
+                last_letter--;
+            }
+
+            
             Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8));
             last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
 
-            // Заполняем до разделителя
-            while (last_letter > 24) { Console.Write(" "); last_letter--; }
-            if (last_letter == 24) { Console.Write('\u2502'); last_letter--; }
 
-            // Выводим дату
+            while (last_letter > 24)
+            {
+                Console.Write(" ");
+                last_letter--;
+            }
+            if (last_letter == 24)
+            {
+                Console.Write('\u2502');
+                last_letter--;
+            }
+
+          
             Console.Write(ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10));
             last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
 
-            // Заполняем до разделителя
-            while (last_letter > 12) { Console.Write(" "); last_letter--; }
-            if (last_letter == 12) { Console.Write('\u2502'); last_letter--; }
 
-            // Выводим время
+            while (last_letter > 12)
+            {
+                Console.Write(" ");
+                last_letter--;
+            }
+            if (last_letter == 12)
+            {
+                Console.Write('\u2502');
+                last_letter--;
+            }
+
+          
             Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 5));
             last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 5).Length;
 
-            // Заполняем оставшееся пространство
-            while (last_letter > 0) { Console.Write(" "); last_letter--; }
+
+            while (last_letter > 0)
+            {
+                Console.Write(" ");
+                last_letter--;
+            }
 
             Console.Write('\u2551');
             //конец правого поля
@@ -392,11 +456,11 @@ class Program
         DrawSmallBorder(width);
         DrawSmallBorder(width);
 
-        Console.BackgroundColor =ConsoleColor.Black;
+        Console.BackgroundColor = ConsoleColor.Black;
         Console.WriteLine();
 
-        FileInfo(width);
-        FileInfo(width);
+        FileInfo(width, target);
+        FileInfo(width, target);
 
         Console.BackgroundColor =ConsoleColor.Black;
         Console.WriteLine();
