@@ -49,8 +49,9 @@ class Program
 
         }
         else return name;
-    }       
-    static void FirstInterface(int width)
+    }
+    
+    static void HeadBar(int width)
     {
         int last_letter = width;
         Console.BackgroundColor = ConsoleColor.DarkCyan;
@@ -81,9 +82,9 @@ class Program
         }
         Console.BackgroundColor = ConsoleColor.Cyan;
         Console.Write("8:30");
-        Console.ResetColor();     
+        Console.ResetColor();
     }
-    static void FirstLinefield(int width)
+    static void DirInfo(int width)
     {
         width /= 2;
         Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -346,7 +347,7 @@ class Program
         DrawBorder(width, '\u255A','\u2550', '\u255D');
         DrawBorder(width, '\u255A','\u2550', '\u255D');
     }
-    static void LastInterface(int width)
+    static void FootBar(int width)
     {
         int last_letter = width;
         Console.ResetColor();
@@ -449,18 +450,18 @@ class Program
             new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
             new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
         };
-        FirstInterface(width);
+        HeadBar(width);
         Console.WriteLine();
 
-        FirstLinefield(width);
-        FirstLinefield(width);
+        DirInfo(width);
+        DirInfo(width);
         Console.WriteLine();
 
         DataRender(width, height, items);
         Console.WriteLine();
         Console.WriteLine();
 
-        LastInterface(width);
+        FootBar(width);
         Console.WriteLine();
         Console.SetCursorPosition(0, height - 1);
     }
