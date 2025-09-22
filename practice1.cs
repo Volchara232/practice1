@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime;
 using System.Security.AccessControl;
 class Program
 {
@@ -19,7 +20,7 @@ class Program
             IsDirectory = isDirectory;
         }
     }
-    static string ShortenName(string name, int maxLength)
+    static string ShortenName(string name, int maxLength)    
     {
         int i = name.Length - 1, have_ext = 0;        
         string tmp, ext = "", extreverse = "";
@@ -36,7 +37,7 @@ class Program
                 i--;
             }          
             if (have_ext == 1)
-            {   i = ext.Length - 1;
+            {   i = extreverse.Length - 1;
                 while (i >= 0)
                 {
                     ext += extreverse[i];
@@ -46,11 +47,10 @@ class Program
             }
             else tmp = $"{name.Substring(0, maxLength - ext.Length - 1)}~";
             return tmp;
-
         }
         else return name;
     }
-    
+
     static void HeadBar(int width)
     {
         int last_letter = width;
@@ -84,7 +84,7 @@ class Program
         Console.Write("8:30");
         Console.ResetColor();
     }
-    static void DirInfo(int width)
+    static void DirInfo(int width, bool is_target)
     {
         width /= 2;
         Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -99,7 +99,16 @@ class Program
             half_last_letter--;
             last_letter--;
         }
+        if (is_target)
+        {
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+        }
         Console.Write("  /etc/opt  ");
+        Console.ResetColor();
+        Console.BackgroundColor = ConsoleColor.DarkBlue;
+        Console.ForegroundColor = ConsoleColor.Cyan;
+
         last_letter -= 12;
         while (last_letter > 1)
         {
@@ -223,8 +232,8 @@ class Program
             last_letter--;
         }
 
-        Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 5));
-        last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 5).Length;
+        Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 8));
+        last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 8).Length;
 
         while (last_letter > 0)
         {
@@ -233,19 +242,31 @@ class Program
         }
         Console.Write('\u2551');      
     }
-    static int LeftField(int width, List<FileItem> items, int i)
+    static int LeftField(int width, List<FileItem> items, int i, bool file_is_target, bool field_is_target)
     {
         int last_letter = width - 2, j = 0;
         FileItem file = items[i];
         Console.Write('\u2551');
         i++;
+        
         while (last_letter > 0)
         {
             if (j < file.Name.Length)
             {
+                if (file_is_target & field_is_target)
+                {
+                    Console.BackgroundColor = ConsoleColor.Cyan;
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                }
                 Console.Write(file.Name[j]);
                 last_letter--;
                 j++;
+                if (j == file.Name.Length)
+                {
+                    file_is_target = false;
+                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                }
             }
             else if (last_letter == 32 || last_letter == 16)
             {
@@ -253,7 +274,7 @@ class Program
                 j = 0;
                 last_letter--;
                 file = items[i++];
-                file.Name = ShortenName(file.Name, 10);
+                file.Name = ShortenName(file.Name, 15);
             }
             else if (j >= file.Name.Length)
             {
@@ -264,12 +285,20 @@ class Program
         Console.Write('\u2551');
         return i;
     }
-    static void RightField(int width, FileItem file)
+    static void RightField(int width, FileItem file, bool file_is_target, bool field_is_target)
     {
         int last_letter = width - 2;
-        Console.Write('\u2551');      
-        Console.Write(ShortenName(file.Name, 10));
-        last_letter -= ShortenName(file.Name, 10).Length;
+        Console.Write('\u2551');
+        if (file_is_target & field_is_target)
+        {
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+        }     
+        Console.Write(ShortenName(file.Name, 12));
+        Console.BackgroundColor = ConsoleColor.DarkBlue;
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        
+        last_letter -= ShortenName(file.Name, 12).Length;
         while (last_letter > 36)
         {
             Console.Write(" ");
@@ -281,8 +310,8 @@ class Program
             last_letter--;
         } 
 
-        Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8));
-        last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
+        Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 10));
+        last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 10).Length;
 
         while (last_letter > 24)
         {
@@ -296,7 +325,6 @@ class Program
         }
         Console.Write(ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10));
         last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
-
         while (last_letter > 12)
         {
             Console.Write(" ");
@@ -317,10 +345,14 @@ class Program
         }
         Console.Write('\u2551');
     }
-    static void DataRender(int width, int height, List<FileItem> items)
+    static void DataRender(int width, int height, List<FileItem> items, int id_target, int id_field_target)
     {
         int i = 0;
-        FileItem file, target = items[0];
+        bool file_is_target = false,
+             left_is_target = id_field_target == 1,
+             right_is_target = id_field_target == 2;   
+             
+        FileItem file, target = items[id_target];
         width /= 2;
         CollumNames(width);
         Console.BackgroundColor = ConsoleColor.DarkBlue;
@@ -328,13 +360,13 @@ class Program
 
         while (height > 7 && i < items.Count)
         {
-
             file = items[i];
-            i = LeftField(width, items, i);
-            RightField(width, file);
+            if (file == target) file_is_target = true;
+            i = LeftField(width, items, i, left_is_target, file_is_target);
+            RightField(width, file, right_is_target, file_is_target);
             Console.WriteLine();
             height--;
-
+            file_is_target = false;
         }
         DrawBorder(width, '\u255F','\u2500', '\u2562');
         DrawBorder(width, '\u255F','\u2500', '\u2562');
@@ -373,10 +405,11 @@ class Program
     }
     static void Main()
     {
-        int height = 25, width = 100;
+        int height = 25, width = 100, id_target = 0;
         Console.Clear();
         List<FileItem> items = new List<FileItem>
         {
+            new FileItem("MyPractice1.cs", 323, DateTime.Now.AddDays(-20), false),
             new FileItem("Program.cs", 2048, DateTime.Now.AddDays(-1), false),
             new FileItem("MyFileWithLongName.txt", 12345, DateTime.Now, false),
             new FileItem("Photos", 0, DateTime.Now.AddDays(-2), true),
@@ -417,10 +450,10 @@ class Program
             new FileItem("MyFileWithLongName.txt", 12345, DateTime.Now, false),
             new FileItem("Photos", 0, DateTime.Now.AddDays(-2), true),
             new FileItem("Documents", 0, DateTime.Now.AddDays(-10), true),
-            new FileItem("SICRET.jpgreturn Console.ReadLine();", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("SICRET.jpg", 2048, DateTime.Now.AddDays(-1), false),
             new FileItem("Homework", 54243, DateTime.Now, true),
             new FileItem("Anapa2007", 0, DateTime.Now.AddDays(-2), true),
-            new FileItem("WiInputField();ldberis", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("WiInputField", 0, DateTime.Now.AddDays(-10), true),
             new FileItem("RGR.cpp", 2048, DateTime.Now.AddDays(-1), false),
             new FileItem("PVZ.exe", 12345, DateTime.Now, false),
             new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
@@ -450,19 +483,22 @@ class Program
             new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
             new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
         };
+        
+
         HeadBar(width);
         Console.WriteLine();
 
-        DirInfo(width);
-        DirInfo(width);
+        DirInfo(width, false);
+        DirInfo(width, true);
         Console.WriteLine();
 
-        DataRender(width, height, items);
+        DataRender(width, height, items, id_target, 2);
         Console.WriteLine();
         Console.WriteLine();
 
         FootBar(width);
         Console.WriteLine();
         Console.SetCursorPosition(0, height - 1);
+       
     }
 }
