@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.AccessControl;
 class Program
 {
 
@@ -137,7 +138,7 @@ class Program
 
 
     }
-    static void CollumNames(int width, int count_column)
+    static void CollumNames(int width)
     {
         int last_letter;
         Console.BackgroundColor = ConsoleColor.Blue;
@@ -175,6 +176,7 @@ class Program
 
 
 
+        //Правая часть
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write('\u2551');
 
@@ -321,135 +323,123 @@ class Program
         
 
     }
-    static void Fields(int width, int height, int count_column, List <FileItem> items)
+    static int LeftField(int width, List<FileItem> items, int i)
     {
-        int last_letter, column_len, i = 0, j = 0;
-        FileItem target = items[0];   
-        width /= 2;
-        column_len = (width - 2) / count_column;        
-        CollumNames(width, count_column);
-        
-
-
-        while (height > 7 && i < items.Count )
+        int last_letter = width - 2, j = 0;
+        FileItem file = items[i];
+        Console.BackgroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Write('\u2551');
+        i++;
+        while (last_letter > 0)
         {
-            //==========Левое поле ============
-
-
-
-
-            FileItem file = items[i];
-            i++;
-
-            Console.BackgroundColor = ConsoleColor.Blue;
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write('\u2551');
-            last_letter = width - 2;
-            j = 0;
-            while (last_letter > 0)
+            if (j < file.Name.Length)
             {
-                if (j < file.Name.Length)
-                {
-                    Console.Write(file.Name[j]);
-                    last_letter--;
-                    j++;
-                }
-                else if (last_letter == 32 || last_letter == 16)
-                {
-                    Console.Write('\u2502');
-                    j = 0;
-                    last_letter--;
-                    file = items[i++];
-                    file.Name = ShortenName(file.Name, 10);
-                }
-                else if (j >= file.Name.Length)
-                {
-                    Console.Write(" ");
-                    last_letter--;
-                }
-
-
-
+                Console.Write(file.Name[j]);
+                last_letter--;
+                j++;
             }
-            Console.Write('\u2551');
-
-
-
-            //======Правое поле=========
-
-
-    
-           
-            Console.Write('\u2551');
-            last_letter = width - 2;
-
-     
-            Console.Write(ShortenName(file.Name, 10));
-            last_letter -= ShortenName(file.Name, 10).Length;
-
-
-            while (last_letter > 36)
+            else if (last_letter == 32 || last_letter == 16)
+            {
+                Console.Write('\u2502');
+                j = 0;
+                last_letter--;
+                file = items[i++];
+                file.Name = ShortenName(file.Name, 10);
+            }
+            else if (j >= file.Name.Length)
             {
                 Console.Write(" ");
                 last_letter--;
             }
-            if (last_letter == 36)
-            {
-                Console.Write('\u2502');
-                last_letter--;
-            }
 
+
+        }
+        Console.Write('\u2551');
+        return i;
+    }
+    static void RightField(int width, FileItem file)
+    {
+        int last_letter = width - 2;
+        Console.Write('\u2551');      
+        Console.Write(ShortenName(file.Name, 10));
+        last_letter -= ShortenName(file.Name, 10).Length;
+
+
+        while (last_letter > 36)
+        {
+            Console.Write(" ");
+            last_letter--;
+        }
+        if (last_letter == 36)
+        {
+            Console.Write('\u2502');
+            last_letter--;
+        }
+
+
+        Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8));
+        last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
+
+
+        while (last_letter > 24)
+        {
+            Console.Write(" ");
+            last_letter--;
+        }
+        if (last_letter == 24)
+        {
+            Console.Write('\u2502');
+            last_letter--;
+        }
+
+
+        Console.Write(ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10));
+        last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
+
+
+        while (last_letter > 12)
+        {
+            Console.Write(" ");
+            last_letter--;
+        }
+        if (last_letter == 12)
+        {
+            Console.Write('\u2502');
+            last_letter--;
+        }
+
+
+        Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 5));
+        last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 5).Length;
+
+
+        while (last_letter > 0)
+        {
+            Console.Write(" ");
+            last_letter--;
+        }
+
+        Console.Write('\u2551');
+    }
+    static void DataRender(int width, int height, List<FileItem> items)
+    {
+        int i = 0;
+        FileItem file, target = items[0];
+        width /= 2;
+
+        CollumNames(width);
+
+        while (height > 7 && i < items.Count)
+        {
             
-            Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8));
-            last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
+            file = items[i];
+            i = LeftField(width, items, i);           
+            RightField(width, file);        
 
-
-            while (last_letter > 24)
-            {
-                Console.Write(" ");
-                last_letter--;
-            }
-            if (last_letter == 24)
-            {
-                Console.Write('\u2502');
-                last_letter--;
-            }
-
-          
-            Console.Write(ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10));
-            last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
-
-
-            while (last_letter > 12)
-            {
-                Console.Write(" ");
-                last_letter--;
-            }
-            if (last_letter == 12)
-            {
-                Console.Write('\u2502');
-                last_letter--;
-            }
-
-          
-            Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 5));
-            last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 5).Length;
-
-
-            while (last_letter > 0)
-            {
-                Console.Write(" ");
-                last_letter--;
-            }
-
-            Console.Write('\u2551');
-            //конец правого поля
-
-            Console.ResetColor(); 
+            Console.ResetColor();
             Console.WriteLine();
             height--;
-
-
 
         }
 
@@ -462,9 +452,9 @@ class Program
         FileInfo(width, target);
         FileInfo(width, target);
 
-        Console.BackgroundColor =ConsoleColor.Black;
+        Console.BackgroundColor = ConsoleColor.Black;
         Console.WriteLine();
-        
+
         DrawBorder(width);
         DrawBorder(width);
 
@@ -544,6 +534,54 @@ class Program
             new FileItem("PVZ.exe", 12345, DateTime.Now, false),
             new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
             new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("Program.cs", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("MyFileWithLongName.txt", 12345, DateTime.Now, false),
+            new FileItem("Photos", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Documents", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("SICRET.jpg", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("Homework", 54243, DateTime.Now, true),
+            new FileItem("Anapa2007", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Wildberis", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("RGR.cpp", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("PVZ.exe", 12345, DateTime.Now, false),
+            new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
+            new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("Program.cs", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("MyFileWithLongName.txt", 12345, DateTime.Now, false),
+            new FileItem("Photos", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Documents", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("SICRET.jpg", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("Homework", 54243, DateTime.Now, true),
+            new FileItem("Anapa2007", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Wildberis", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("RGR.cpp", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("PVZ.exe", 12345, DateTime.Now, false),
+            new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
+            new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("Program.cs", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("MyFileWithLongName.txt", 12345, DateTime.Now, false),
+            new FileItem("Photos", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Documents", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("SICRET.jpg", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("Homework", 54243, DateTime.Now, true),
+            new FileItem("Anapa2007", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Wildberis", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("RGR.cpp", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("PVZ.exe", 12345, DateTime.Now, false),
+            new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
+            new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("Program.cs", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("MyFileWithLongName.txt", 12345, DateTime.Now, false),
+            new FileItem("Photos", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Documents", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("SICRET.jpg", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("Homework", 54243, DateTime.Now, true),
+            new FileItem("Anapa2007", 0, DateTime.Now.AddDays(-2), true),
+            new FileItem("Wildberis", 0, DateTime.Now.AddDays(-10), true),
+            new FileItem("RGR.cpp", 2048, DateTime.Now.AddDays(-1), false),
+            new FileItem("PVZ.exe", 12345, DateTime.Now, false),
+            new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
+            new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
 
 
         };
@@ -553,19 +591,18 @@ class Program
 
         FirstLinefield(width);
         FirstLinefield(width);
-        Console.BackgroundColor = ConsoleColor.Black;
+        
         Console.WriteLine();
 
-        Fields(width, height, 3, items);
-        Console.BackgroundColor = ConsoleColor.Black;
+        DataRender(width, height, items);
+       
         Console.WriteLine();
 
-        Console.BackgroundColor = ConsoleColor.Black;
+        
         InputField();
         Console.WriteLine();
-        
+
         LastInterface(width);
-        Console.BackgroundColor = ConsoleColor.Black;
         Console.WriteLine();
 
 
