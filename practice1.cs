@@ -35,7 +35,7 @@ class Program
                     have_ext = 1;
                     break;
                 }
-                ext += name[i];
+                extreverse += name[i];
                 i--;
             }
             
@@ -44,12 +44,12 @@ class Program
             {   i = ext.Length - 1;
                 while (i >= 0)
                 {
-                    extreverse += ext[i];
+                    ext += extreverse[i];
                     i--;
                 }
-                tmp = $"{name.Substring(0, maxLength - extreverse.Length - 2)}~.{extreverse}";
+                tmp = $"{name.Substring(0, maxLength - ext.Length - 2)}~.{ext}";
             }
-            else tmp = $"{name.Substring(0, maxLength - extreverse.Length - 1)}~";
+            else tmp = $"{name.Substring(0, maxLength - ext.Length - 1)}~";
             return tmp;
 
         }
@@ -102,34 +102,34 @@ class Program
         Console.Write("8:30");
 
         Console.ResetColor();
-        Console.WriteLine();
+        
 
 
     }
     static void FirstLinefield(int width)
     {
         width /= 2;
-        Console.BackgroundColor = ConsoleColor.Blue;
+        Console.BackgroundColor = ConsoleColor.DarkBlue;
         Console.ForegroundColor = ConsoleColor.Cyan;
         int last_letter = width;
-        int half_last_letter = (last_letter - 12) / 2 ;
+        int half_last_letter = (width - 12) / 2 ;
 
         Console.Write('\u2554');
-        last_letter -= 1;
+        last_letter--;
 
 
         while (half_last_letter > 0)
         {
             Console.Write('\u2550');
-            half_last_letter -= 1;
-            last_letter -= 1;
+            half_last_letter--;
+            last_letter--;
         }
         Console.Write("  /etc/opt  ");
         last_letter -= 12;
         while (last_letter > 1)
         {
             Console.Write('\u2550');
-            last_letter -= 1;
+            last_letter--;
         }
         Console.Write('\u2557');
         
@@ -140,28 +140,24 @@ class Program
     }
     static void CollumNames(int width)
     {
-        int last_letter;
-        Console.BackgroundColor = ConsoleColor.Blue;
-
+        int last_letter = width - 11;
+        Console.BackgroundColor = ConsoleColor.DarkBlue;
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write('\u2551');
 
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write("etc:  Имя");
         Console.ForegroundColor = ConsoleColor.Cyan;
-
-        last_letter = width - 11;
-       
+               
         while (last_letter > 0)
         {
 
             if (last_letter == 32 || last_letter == 16)
-            {   Console.Write('\u2502');
+            {
+                Console.Write('\u2502');
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write("      Имя      ");
-                
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                
                 last_letter -= 16;
             }
             else
@@ -169,17 +165,12 @@ class Program
                 Console.Write(" ");
                 last_letter--;
             }
-
-
         }
         Console.Write('\u2551');   
-
-
 
         //Правая часть
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write('\u2551');
-
         Console.ForegroundColor = ConsoleColor.White;
         Console.Write("etc:  Имя");
         Console.ForegroundColor = ConsoleColor.Cyan;
@@ -188,118 +179,80 @@ class Program
        
         while (last_letter > 0)
         {
-
-            if (last_letter == 36)
+            switch (last_letter)
             {
-                Console.Write('\u2502');
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("  Размер");
-
-                Console.ForegroundColor = ConsoleColor.Cyan;
-
-                last_letter -= 9;
+                case 36:
+                    Console.Write('\u2502');
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("  Размер");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    last_letter -= 9;
+                    break;
+                    
+                case 24:
+                    Console.Write('\u2502');
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("   Дата");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    last_letter -= 8;
+                    break;
+                    
+                case 12:
+                    Console.Write('\u2502');
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("   Время");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    last_letter -= 9;
+                    break;
+                    
+                default:
+                    Console.Write(" ");
+                    last_letter--;
+                    break;
             }
-            else if (last_letter == 24)
-            {
-                Console.Write('\u2502');
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("   Дата");
-
-                Console.ForegroundColor = ConsoleColor.Cyan;
-
-                last_letter -= 8;
-            }
-            else if (last_letter == 12)
-            {
-                 Console.Write('\u2502');
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("   Время");
-
-                Console.ForegroundColor = ConsoleColor.Cyan;
-
-                last_letter -= 9;
-            }
-            else
-            {
-                Console.Write(" ");
-                last_letter--;
-            }
-
-
         }
         Console.Write('\u2551');
         Console.ResetColor(); 
         Console.WriteLine();
 
     }
-    static void DrawSmallBorder(int width)
+    static void DrawBorder(int width, char left_symbol, char center_symbol, char right_symbol)
     {
-        Console.BackgroundColor = ConsoleColor.Blue;
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        int last_letter;
-        Console.Write('\u2551');
-        last_letter = width - 2;
+        int last_letter = width - 2;
+        Console.BackgroundColor = ConsoleColor.DarkBlue;
+        Console.ForegroundColor = ConsoleColor.Cyan;        
+        Console.Write(left_symbol);       
         while (last_letter > 0)
         {
-            Console.Write('\u2500');
+            Console.Write(center_symbol);   
             last_letter--;
         }
-        Console.Write('\u2551');
-        
-
-        
-
-    }
-    
-    static void DrawBorder(int width)
-    {
-        Console.BackgroundColor = ConsoleColor.Blue;
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        int last_letter;
-        Console.Write('\u255A');
-        last_letter = width - 2;
-        while (last_letter > 0)
-        {
-            Console.Write('\u2550');
-            last_letter--;
-        }
-        Console.Write('\u255D');
-
-
-
-
+        Console.Write(right_symbol);     
     }
     static void FileInfo(int width, FileItem file)
     {
-        Console.BackgroundColor = ConsoleColor.Blue;
-        Console.ForegroundColor = ConsoleColor.Cyan;
         int last_letter = width - 2;
         Console.Write('\u2551');
         Console.Write(ShortenName(file.Name, 10));
         last_letter -= ShortenName(file.Name, 10).Length;
 
-
         while (last_letter > 35)
         {
             Console.Write(" ");
             last_letter--;
-        }
-
+        } 
 
         Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8));
         last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
-
 
         while (last_letter > 23)
         {
             Console.Write(" ");
             last_letter--;
-        }
-
+        } 
 
         Console.Write(ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10));
         last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
-
 
         while (last_letter > 11)
         {
@@ -307,28 +260,21 @@ class Program
             last_letter--;
         }
 
-
         Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 5));
         last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 5).Length;
-
 
         while (last_letter > 0)
         {
             Console.Write(" ");
             last_letter--;
         }
-        Console.Write('\u2551');
-
-
-        
-
+        Console.Write('\u2551');      
     }
     static int LeftField(int width, List<FileItem> items, int i)
     {
         int last_letter = width - 2, j = 0;
         FileItem file = items[i];
-        Console.BackgroundColor = ConsoleColor.Blue;
-        Console.ForegroundColor = ConsoleColor.Cyan;
+        
         Console.Write('\u2551');
         i++;
         while (last_letter > 0)
@@ -364,8 +310,6 @@ class Program
         Console.Write('\u2551');      
         Console.Write(ShortenName(file.Name, 10));
         last_letter -= ShortenName(file.Name, 10).Length;
-
-
         while (last_letter > 36)
         {
             Console.Write(" ");
@@ -375,12 +319,10 @@ class Program
         {
             Console.Write('\u2502');
             last_letter--;
-        }
-
+        } 
 
         Console.Write(ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8));
         last_letter -= ShortenName(file.IsDirectory ? "<DIR>" : file.Size.ToString(), 8).Length;
-
 
         while (last_letter > 24)
         {
@@ -393,10 +335,8 @@ class Program
             last_letter--;
         }
 
-
         Console.Write(ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10));
         last_letter -= ShortenName(file.ModificationDate.ToString("dd.MM.yyyy"), 10).Length;
-
 
         while (last_letter > 12)
         {
@@ -409,10 +349,8 @@ class Program
             last_letter--;
         }
 
-
         Console.Write(ShortenName(file.ModificationDate.ToString("HH:mm"), 5));
         last_letter -= ShortenName(file.ModificationDate.ToString("HH:mm"), 5).Length;
-
 
         while (last_letter > 0)
         {
@@ -427,86 +365,68 @@ class Program
         int i = 0;
         FileItem file, target = items[0];
         width /= 2;
-
         CollumNames(width);
+        Console.BackgroundColor = ConsoleColor.DarkBlue;
+        Console.ForegroundColor = ConsoleColor.Cyan;
 
         while (height > 7 && i < items.Count)
         {
-            
-            file = items[i];
-            i = LeftField(width, items, i);           
-            RightField(width, file);        
 
-            Console.ResetColor();
+            file = items[i];
+            i = LeftField(width, items, i);
+            RightField(width, file);
             Console.WriteLine();
             height--;
 
         }
 
-        DrawSmallBorder(width);
-        DrawSmallBorder(width);
-
-        Console.BackgroundColor = ConsoleColor.Black;
+        DrawBorder(width, '\u255F','\u2500', '\u2562');
+        DrawBorder(width, '\u255F','\u2500', '\u2562');
         Console.WriteLine();
 
         FileInfo(width, target);
         FileInfo(width, target);
-
-        Console.BackgroundColor = ConsoleColor.Black;
         Console.WriteLine();
 
-        DrawBorder(width);
-        DrawBorder(width);
-
-
-
-    }
-    
-  
+        DrawBorder(width, '\u255A','\u2550', '\u255D');
+        DrawBorder(width, '\u255A','\u2550', '\u255D');
+    }   
     static void LastInterface(int width)
     {
         int last_letter = width;
-        Console.BackgroundColor = ConsoleColor.Black;
+        Console.ResetColor();
         List<string> fieldnames = new List<string>
         {
             "1Помощь", "2Вызов ", "3Чтение ", "4Правка ", "5Копия ", "6НовИмя ", "7НовКат ", "8Удал-е ", "9Меню ", "0Выход"
         };
-
-
-       
+               
         foreach (string field in fieldnames)
-        {  
+        {
             Console.Write(field[0]);
             last_letter--;
 
             Console.BackgroundColor = ConsoleColor.DarkCyan;
             Console.ForegroundColor = ConsoleColor.Black;
-
             if (field.Length > 1)
             {
                 Console.Write(field.Substring(1));
                 last_letter--;
             }
-
-
-            Console.ResetColor(); 
+            Console.ResetColor();
             Console.Write("   ");
-            last_letter-=3;
+            last_letter -= 3;
         }
-
     }
     static void InputField()
     {
         Console.ResetColor();
-        Console.Write("[user opt]$");
- 
+        Console.Write("[user opt]$"); 
     }
 
 
     static void Main()
     {
         int height = 25, width = 100;
-
         Console.Clear();
         List<FileItem> items = new List<FileItem>
         {
@@ -582,34 +502,21 @@ class Program
             new FileItem("PVZ.exe", 12345, DateTime.Now, false),
             new FileItem("buildZOV.exe", 0, DateTime.Now.AddDays(-2), false),
             new FileItem("Pacman", 0, DateTime.Now.AddDays(-10), true),
-
-
         };
-
         FirstInterface(width);
-
-
-        FirstLinefield(width);
-        FirstLinefield(width);
-        
         Console.WriteLine();
 
-        DataRender(width, height, items);
-       
+        FirstLinefield(width);
+        FirstLinefield(width);        
         Console.WriteLine();
 
-        
+        DataRender(width, height, items);       
+        Console.WriteLine();
+
         InputField();
         Console.WriteLine();
 
         LastInterface(width);
         Console.WriteLine();
-
-
-
-
-
-
-
     }
 }
