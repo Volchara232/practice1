@@ -199,29 +199,28 @@ namespace FileManager.UI
         {
             int width = Width / 2;
             int height = Height;
+            int currentIndex = 0;
             int cursorHeight = 0;
 
             bool leftIsTarget = targetFieldId == 1;
             bool rightIsTarget = targetFieldId == 2;
+            var sortedItems = TransMatrix(items.OrderBy(item => item.Name).ToList());
+            var leftField = new LeftFieldLine(width, sortedItems);
+            var rightField = new RightFieldLine(width, sortedItems);
+            
 
-            var leftField = new LeftFieldLine(width, items);
-            var rightField = new RightFieldLine(width, items);
-
+            FileItem targetFile = sortedItems[targetId];
             leftField.DrawDescription();
             rightField.DrawDescription();
             Console.WriteLine();
 
             Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.Cyan;      
 
-            var sortedItems = TransMatrix(items.OrderBy(item => item.Name).ToList());
-            FileItem targetFile = sortedItems[targetId];
-
-            int currentIndex = 0;
             while (height > 7 && currentIndex < sortedItems.Count)
             {
                 currentIndex = leftField.DrawData(currentIndex, targetId, leftIsTarget);
-                rightField.DrawData(currentIndex - 1, targetId, rightIsTarget);
+                rightField.DrawData(currentIndex - 3, targetId, rightIsTarget);
                 Console.WriteLine();
                 height--;
                 cursorHeight++;

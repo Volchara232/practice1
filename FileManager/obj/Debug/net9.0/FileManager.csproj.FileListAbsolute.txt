@@ -1,0 +1,15 @@
+/home/user/code/proga3/FileManager/bin/Debug/net9.0/FileManager
+/home/user/code/proga3/FileManager/bin/Debug/net9.0/FileManager.deps.json
+/home/user/code/proga3/FileManager/bin/Debug/net9.0/FileManager.runtimeconfig.json
+/home/user/code/proga3/FileManager/bin/Debug/net9.0/FileManager.dll
+/home/user/code/proga3/FileManager/bin/Debug/net9.0/FileManager.pdb
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/FileManager.GeneratedMSBuildEditorConfig.editorconfig
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/FileManager.AssemblyInfoInputs.cache
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/FileManager.AssemblyInfo.cs
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/FileManager.csproj.CoreCompileInputs.cache
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/FileManager.sourcelink.json
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/FileManager.dll
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/refint/FileManager.dll
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/FileManager.pdb
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/FileManager.genruntimeconfig.cache
+/home/user/code/proga3/FileManager/obj/Debug/net9.0/ref/FileManager.dll
