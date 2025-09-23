@@ -10,7 +10,7 @@ namespace FileManager
         static void Main()
         {
             int height = 25, width = 100, targetId = 0, cursorHeight;
-            Console.SetWindowSize(width, height); //- Не работает на Linux :(
+           //Console.SetWindowSize(width, height); //- Не работает на Linux :(
             Console.Clear();
             List<FileItem> items = new List<FileItem>
             {
@@ -53,7 +53,8 @@ namespace FileManager
             cursorHeight = ui.DataRender(items, targetId, 2);
             Console.WriteLine();
             ui.FootBar();
-
+            Console.WriteLine();
+           
             Console.SetCursorPosition(0, cursorHeight);
         }
     }

@@ -204,7 +204,8 @@ namespace FileManager.UI
 
             bool leftIsTarget = targetFieldId == 1;
             bool rightIsTarget = targetFieldId == 2;
-            var sortedItems = TransMatrix(items.OrderBy(item => item.Name).ToList());
+            var sortedItems = items.OrderBy(item => item.Name).ToList();
+            sortedItems = TransMatrix(sortedItems);
             var leftField = new LeftFieldLine(width, sortedItems);
             var rightField = new RightFieldLine(width, sortedItems);
 
@@ -216,7 +217,7 @@ namespace FileManager.UI
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.ForegroundColor = ConsoleColor.Cyan;      
 
-            while (height > 7 && currentIndex < sortedItems.Count)
+            while (height > 7)
             {
                 currentIndex = leftField.DrawData(currentIndex, targetId, leftIsTarget);
                 rightField.DrawData(currentIndex - 3, targetId, rightIsTarget);

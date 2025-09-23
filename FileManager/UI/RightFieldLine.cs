@@ -53,11 +53,28 @@ namespace FileManager.UI
 
         public override int DrawData(int startIndex, int targetId, bool isTargetField)
         {
-            if (startIndex >= Items.Count) return startIndex;
             
+            int lastLetter = Width - 2;
+
+            if (startIndex >= Items.Count) 
+            {
+                Console.Write('\u2551');
+                while (lastLetter > 0)
+                {
+                    Console.Write(" ");
+                    lastLetter--;
+                    if (lastLetter == 36 || lastLetter == 24 || lastLetter == 12)
+                    {
+                        Console.Write('\u2502');
+                        lastLetter--;
+                    }
+                }
+                Console.Write('\u2551');
+            
+                return startIndex;
+            }
             FileItem file = Items[startIndex];
             bool fileIsTarget = (startIndex == targetId);
-            int lastLetter = Width - 2;
 
             Console.Write('\u2551');
             
