@@ -207,7 +207,6 @@ namespace FileManager.UI
             var sortedItems = TransMatrix(items.OrderBy(item => item.Name).ToList());
             var leftField = new LeftFieldLine(width, sortedItems);
             var rightField = new RightFieldLine(width, sortedItems);
-            
 
             FileItem targetFile = sortedItems[targetId];
             leftField.DrawDescription();
