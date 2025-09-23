@@ -205,7 +205,7 @@ namespace FileManager.UI
             bool leftIsTarget = targetFieldId == 1;
             bool rightIsTarget = targetFieldId == 2;
             var sortedItems = items.OrderBy(item => item.Name).ToList();
-            sortedItems = TransMatrix(sortedItems);
+            //sortedItems = TransMatrix(sortedItems);
             var leftField = new LeftFieldLine(width, sortedItems);
             var rightField = new RightFieldLine(width, sortedItems);
 
